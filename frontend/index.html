@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>UAX MFlix</title>
+    <style>
+        body { font-family: Arial; display: flex; gap: 20px; padding: 20px; background: #eee; }
+        .section { background: white; padding: 20px; border-radius: 8px; flex: 1; }
+    </style>
+</head>
+<body>
+    <div class="section">
+        <h2>Películas</h2>
+        <div id="movies">Cargando...</div>
+    </div>
+    <div class="section">
+        <h2>Usuarios</h2>
+        <div id="users">Cargando...</div>
+    </div>
+
+    <script>
+        fetch('http://localhost:3000/movies').then(r => r.json()).then(data => {
+            document.getElementById('movies').innerHTML = data.map(m => `<p>🎬 ${m.title}</p>`).join('');
+        });
+        fetch('http://localhost:3001/users').then(r => r.json()).then(data => {
+            document.getElementById('users').innerHTML = data.map(u => `<p>👤 ${u.name}</p>`).join('');
+        });
+    </script>
+</body>
+</html>

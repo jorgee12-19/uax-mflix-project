@@ -1,0 +1,12 @@
+name: Cloud Native CI/CD
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build Images
+        run: |
+          docker build -t mflix-movies ./movie-service
+          docker build -t mflix-users ./user-service
+          docker build -t mflix-web ./frontend

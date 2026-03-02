@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  movie-svc:
+    build: ./movie-service
+    ports: ["3000:3000"]
+    environment:
+      - PORT=3000
+
+  user-svc:
+    build: ./user-service
+    ports: ["3001:3001"]
+    environment:
+      - PORT=3001
+
+  web:
+    build: ./frontend
+    ports: ["8080:80"]

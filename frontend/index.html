@@ -1,29 +1,59 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>UAX MFlix</title>
+    <meta charset="UTF-8">
+    <title>UAX MFlix - Panel de Control</title>
     <style>
-        body { font-family: Arial; display: flex; gap: 20px; padding: 20px; background: #eee; }
-        .section { background: white; padding: 20px; border-radius: 8px; flex: 1; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; gap: 20px; padding: 20px; background: #141414; color: white; }
+        .section { background: #2f2f2f; padding: 20px; border-radius: 12px; flex: 1; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        h2 { border-bottom: 2px solid #e50914; padding-bottom: 10px; color: #e50914; }
+        .item { background: #3d3d3d; margin: 10px 0; padding: 10px; border-radius: 6px; transition: 0.3s; }
+        .item:hover { background: #4a4a4a; }
+        .error { color: #ff4d4d; font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="section">
-        <h2>Películas</h2>
-        <div id="movies">Cargando...</div>
+        <h2>🎬 Películas</h2>
+        <div id="movies">Cargando catálogo...</div>
     </div>
     <div class="section">
-        <h2>Usuarios</h2>
-        <div id="users">Cargando...</div>
+        <h2>👤 Usuarios</h2>
+        <div id="users">Cargando perfiles...</div>
     </div>
 
     <script>
-        fetch('http://localhost:3000/movies').then(r => r.json()).then(data => {
-            document.getElementById('movies').innerHTML = data.map(m => `<p>🎬 ${m.title}</p>`).join('');
-        });
-        fetch('http://localhost:3001/users').then(r => r.json()).then(data => {
-            document.getElementById('users').innerHTML = data.map(u => `<p>👤 ${u.name}</p>`).join('');
-        });
+        // CONFIGURACIÓN DE PUERTOS (ROL A)
+        // Movies: 3001 | Users: 3002
+        
+        async function fetchData(url, elementId, emoji) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const data = await response.json();
+                
+                if (data.length === 0) {
+                    document.getElementById(elementId).innerHTML = "No hay datos disponibles en Atlas.";
+                    return;
+                }
+
+                document.getElementById(elementId).innerHTML = data.slice(0, 10).map(item => `
+                    <div class="item">
+                        ${emoji} ${item.title || item.name}
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error("Error en el fetch:", error);
+                document.getElementById(elementId).innerHTML = `
+                    <p class="error">❌ Error de conexión</p>
+                    <small>Revisa que el microservicio en ${url} esté corriendo y tenga CORS habilitado.</small>
+                `;
+            }
+        }
+
+        // Ejecutar las llamadas al cargar la página
+        fetchData('http://localhost:3001/movies', 'movies', '🎬');
+        fetchData('http://localhost:3002/users', 'users', '👤');
     </script>
 </body>
 </html>
